@@ -1,0 +1,58 @@
+# ======================
+# Python / FastAPI
+# ======================
+backend/.venv/
+backend/venv/
+backend/__pycache__/
+backend/**/*.pyc
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.coverage
+backend/htmlcov/
+
+# Environment files
+backend/.env
+backend/.env.*
+
+# Logs
+backend/*.log
+
+# ======================
+# Node.js / Next.js
+# ======================
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Environment files
+frontend/.env
+frontend/.env.*
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# ======================
+# VS Code
+# ======================
+.vscode/
+
+# ======================
+# OS Files
+# ======================
+.DS_Store
+Thumbs.db
+
+# ======================
+# Testing
+# ======================
+coverage/
+*.coverage
+
+# ======================
+# Misc
+# ======================
+*.sqlite3
+*.db
