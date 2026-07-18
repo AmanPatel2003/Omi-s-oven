@@ -10,6 +10,8 @@ class CategoryResponse(BaseModel):
     slug: str
     description: Optional[str] = None
     image: Optional[str] = None
+    parent_id: Optional[str] = None                       # ← NEW
+    subcategories: list["CategoryResponse"] = [] 
 
 
 class CategoryDetailResponse(BaseModel):

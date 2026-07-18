@@ -31,6 +31,7 @@ SORT_MAP = {
 async def list_products(
     db,
     category: Optional[str] = None,
+    category_in: Optional[list[str]] = None,   # ← NEW
     search: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
@@ -42,7 +43,9 @@ async def list_products(
 ) -> dict:
     query: dict = {"is_available": True}
 
-    if category:
+    if category_in:
+        query["category"] = {"$in": category_in}
+    elif category:
         query["category"] = category
     if tag:
         query["tags"] = tag

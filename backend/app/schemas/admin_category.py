@@ -6,6 +6,7 @@ class CreateCategoryRequest(BaseModel):
     name: str
     slug: str
     description: Optional[str] = None
+    parent_id: Optional[str] = None    # ← NEW
     sort_order: int = 0
 
     @field_validator("slug")
@@ -28,6 +29,7 @@ class UpdateCategoryRequest(BaseModel):
     name: Optional[str] = None
     slug: Optional[str] = None
     description: Optional[str] = None
+    parent_id: Optional[str] = None    # ← NEW — pass explicit null to unparent, omit to leave unchanged
     sort_order: Optional[int] = None
     is_active: Optional[bool] = None
 
@@ -69,6 +71,9 @@ class AdminCategoryResponse(BaseModel):
     slug: str
     description: Optional[str] = None
     image: Optional[CategoryImageResponse] = None
+    parent_id: Optional[str] = None       # ← NEW
+    parent_name: Optional[str] = None     # ← NEW — resolved, so admin UI doesn't need a second lookup
     sort_order: int
     is_active: bool
     product_count: int = 0
+    subcategory_count: int = 0            # ← NEW — lets the UI show "3 subcategories" on a main category row

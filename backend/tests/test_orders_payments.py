@@ -156,7 +156,7 @@ class TestPaymentCreate:
 
 class TestPaymentVerify:
     async def test_verify_with_correct_signature_succeeds(self, client, customer, product, address, db):
-        from app.core.config import settings
+        from app.config import settings
         order_resp = await _place_order(client, customer, product, address)
         order_id = order_resp.json()["data"]["id"]
         await client.post("/payments/create", headers=customer["headers"], json={"order_id": order_id})
@@ -190,7 +190,7 @@ class TestPaymentVerify:
 
 class TestPaymentWebhook:
     async def test_webhook_with_valid_signature_marks_order_paid(self, client, customer, product, address, db):
-        from app.core.config import settings
+        from app.config import settings
         import json
 
         order_resp = await _place_order(client, customer, product, address)
@@ -226,7 +226,7 @@ class TestPaymentWebhook:
 
     async def test_webhook_is_idempotent_on_duplicate_delivery(self, client, customer, product, address, db):
         """Razorpay may send the same webhook twice — must not double-process."""
-        from app.core.config import settings
+        from app.config import settings
         import json
 
         order_resp = await _place_order(client, customer, product, address)
