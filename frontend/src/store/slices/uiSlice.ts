@@ -7,13 +7,15 @@ export interface Toast {
 }
 
 interface UiState {
-  isCartDrawerOpen: boolean;
+  // Named to match the Cart module spec exactly ("uiSlice's isCartOpen
+  // boolean") — read by both the header's cart icon and CartDrawer.
+  isCartOpen: boolean;
   activeModal: string | null;
   toasts: Toast[];
 }
 
 const initialState: UiState = {
-  isCartDrawerOpen: false,
+  isCartOpen: false,
   activeModal: null,
   toasts: [],
 };
@@ -22,11 +24,14 @@ const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
-    openCartDrawer: (state) => {
-      state.isCartDrawerOpen = true;
+    openCart: (state) => {
+      state.isCartOpen = true;
     },
-    closeCartDrawer: (state) => {
-      state.isCartDrawerOpen = false;
+    closeCart: (state) => {
+      state.isCartOpen = false;
+    },
+    toggleCart: (state) => {
+      state.isCartOpen = !state.isCartOpen;
     },
     openModal: (state, action: PayloadAction<string>) => {
       state.activeModal = action.payload;
@@ -44,8 +49,9 @@ const uiSlice = createSlice({
 });
 
 export const {
-  openCartDrawer,
-  closeCartDrawer,
+  openCart,
+  closeCart,
+  toggleCart,
   openModal,
   closeModal,
   pushToast,

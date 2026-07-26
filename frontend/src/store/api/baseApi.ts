@@ -62,7 +62,7 @@ const baseQueryWithReauth: BaseQueryFn<
         const refreshResult = await localBaseQuery(
           { url: "/api/auth/refresh", method: "POST" },
           api,
-          extraOptions
+          extraOptions,
         );
         if (refreshResult.data) {
           const envelope = refreshResult.data as ApiEnvelope<RefreshResponse>;
@@ -70,7 +70,7 @@ const baseQueryWithReauth: BaseQueryFn<
             setCredentials({
               user: envelope.data.user,
               accessToken: envelope.data.accessToken,
-            })
+            }),
           );
           return true;
         }
@@ -104,6 +104,8 @@ export const baseApi = createApi({
     "Reward",
     "Coupon",
     "Notification",
+    "Reviews",
+    "Address",
   ],
   endpoints: () => ({}),
 });
