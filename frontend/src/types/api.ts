@@ -87,3 +87,436 @@ export interface ChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
 }
+
+// ---------------------------------------------------------------------------
+// Products & Categories module
+// ---------------------------------------------------------------------------
+
+/** Backend's paginated-list shape, nested inside the usual ApiEnvelope. */
+export interface Paginated<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface ProductVariant {
+  id: string;
+  label: string; // e.g. "500g", "1kg"
+  price: number; // paise
+}
+
+export interface ProductImage {
+  id: string;
+  url: string;
+  alt: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface Product {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  price: number; // paise — base/list price
+  discountPrice: number | null; // paise — set only when on sale
+  images: ProductImage[];
+  category: Category;
+  tags: string[];
+  isEggless: boolean;
+  avgRating: number;
+  reviewCount: number;
+  variants: ProductVariant[];
+  inStock: boolean;
+}
+
+export type ProductSort =
+  | "price_asc"
+  | "price_desc"
+  | "newest"
+  | "bestselling"
+  | "rating";
+
+export interface ProductQueryParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  category?: string; // category slug
+  minPrice?: number;
+  maxPrice?: number;
+  isEggless?: boolean;
+  tags?: string[];
+  sort?: ProductSort;
+}
+
+export interface Review {
+  id: string;
+  productId: string;
+  userName: string;
+  rating: number; // 1-5
+  comment: string;
+  createdAt: string;
+}
+
+export interface ReviewSubmitRequest {
+  productId: string;
+  rating: number;
+  comment: string;
+}
+
+export interface CategoryWithProducts extends Category {
+  products: Paginated<Product>;
+}
+
+// ---------------------------------------------------------------------------
+// Cart & Coupons module
+// ---------------------------------------------------------------------------
+
+export interface CartItem {
+  id: string;
+  productId: string;
+  variantId: string | null;
+  name: string;
+  image: string | null;
+  unitPrice: number; // paise, reflects variant price if variantId is set
+  quantity: number;
+  lineTotal: number; // paise
+  // Backend does a live stock check on every cart read — surface these
+  // rather than assuming the quantity added earlier is still available.
+  inStock: boolean;
+  availableStock: number;
+}
+
+export interface Cart {
+  id: string;
+  items: CartItem[];
+  couponCode: string | null;
+}
+
+export interface CartSummary {
+  subtotal: number; // paise
+  discount: number; // paise, from an applied coupon
+  pointsDiscount: number; // paise, from redeemed reward points
+  tax: number; // paise
+  deliveryFee: number; // paise — 0 means free delivery
+  total: number; // paise
+}
+
+export interface AddToCartRequest {
+  productId: string;
+  variantId?: string;
+  quantity: number;
+}
+
+export interface UpdateCartItemRequest {
+  itemId: string;
+  quantity: number;
+}
+
+export interface Coupon {
+  code: string;
+  description: string;
+  discountType: "flat" | "percentage";
+  discountValue: number;
+}
+
+export interface ValidateCouponRequest {
+  code: string;
+  // Passed along so the backend can compute the actual discount preview
+  // against the shopper's current cart, not just check the code exists.
+  cartTotal: number;
+}
+
+export interface ValidateCouponResponse {
+  valid: boolean;
+  coupon: Coupon | null;
+  estimatedDiscount: number; // paise — 0 if invalid
+  message: string;
+}
+
+// ---------------------------------------------------------------------------
+// Addresses — not in this module's listed backend routes, but the Checkout
+// spec explicitly reuses an AddressForm "from the account module," which
+// hasn't been specced yet. This is the minimal address CRUD checkout needs;
+// treat it as provisional until a real Account module defines the actual
+// routes/shape.
+// ---------------------------------------------------------------------------
+
+export type AddressType = "Home" | "Work" | "Other";
+
+// Field names match the backend's AddressRequest exactly, per the Account
+// module spec — this replaces the guessed shape (label/line1/pincode) used
+// provisionally back in the Checkout module before this was known.
+export interface Address {
+  id: string;
+  fullName: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2: string | null;
+  city: string;
+  state: string;
+  postalCode: string;
+  landmark: string | null;
+  addressType: AddressType;
+  isDefault: boolean;
+}
+
+export type AddressInput = Omit<Address, "id" | "isDefault">;
+
+// ---------------------------------------------------------------------------
+// Checkout, Orders & Payments module
+// ---------------------------------------------------------------------------
+
+export type PaymentMethod = "cod" | "online";
+export type PaymentStatus = "pending" | "paid" | "failed";
+
+export interface OrderItem {
+  productId: string;
+  name: string;
+  image: string | null;
+  variantLabel: string | null;
+  unitPrice: number; // paise
+  quantity: number;
+}
+
+export interface OrderStatusHistoryEntry {
+  status: import("@/lib/constants").OrderStatus;
+  timestamp: string;
+}
+
+export interface Order {
+  id: string;
+  items: OrderItem[];
+  address: Address;
+  status: import("@/lib/constants").OrderStatus;
+  statusHistory: OrderStatusHistoryEntry[];
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  subtotal: number;
+  discount: number;
+  pointsDiscount: number;
+  tax: number;
+  deliveryFee: number;
+  total: number;
+  createdAt: string;
+}
+
+export interface CreateOrderRequest {
+  addressId: string;
+  paymentMethod: PaymentMethod;
+  redeemPoints: boolean;
+}
+
+export interface OrderTracking {
+  status: import("@/lib/constants").OrderStatus;
+  latitude: number | null;
+  longitude: number | null;
+  estimatedArrival: string | null;
+  updatedAt: string;
+}
+
+// --- Payments ---------------------------------------------------------------
+
+export interface CreatePaymentResponse {
+  razorpayOrderId: string;
+  amount: number; // paise, matches Razorpay's expected unit
+  currency: string; // "INR"
+}
+
+export interface VerifyPaymentRequest {
+  orderId: string;
+  razorpayPaymentId: string;
+  razorpayOrderId: string;
+  razorpaySignature: string;
+}
+
+export interface Payment {
+  id: string;
+  orderId: string;
+  status: PaymentStatus;
+  amount: number;
+}
+
+// ---------------------------------------------------------------------------
+// Delivery Tracking module (customer-facing)
+// ---------------------------------------------------------------------------
+
+export interface DeliveryTracking {
+  currentLocation: { latitude: number; longitude: number } | null;
+  deliveredAt: string | null;
+  estimatedArrival: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Custom Cake Orders module
+// ---------------------------------------------------------------------------
+
+export interface CustomOrder {
+  id: string;
+  occasion: string;
+  flavor: string;
+  size: string;
+  shape: string;
+  message: string;
+  budgetMin: number; // paise
+  budgetMax: number; // paise
+  neededBy: string; // ISO date
+  addressId: string | null; // null = store pickup
+  referenceImages: string[]; // URLs — see the note on CreateCustomOrderRequest
+  status: import("@/lib/constants").CustomOrderStatus;
+  quotedPrice: number | null; // paise — set once status is "quoted"
+  createdAt: string;
+}
+
+export interface CreateCustomOrderRequest {
+  occasion: string;
+  flavor: string;
+  size: string;
+  shape: string;
+  message: string;
+  budgetMin: number;
+  budgetMax: number;
+  neededBy: string;
+  addressId: string | null;
+  // Per the build spec: the backend expects pre-uploaded URLs here, not raw
+  // files, and no upload endpoint has been confirmed to exist yet. This is
+  // always sent as [] for now — see components/forms/CustomOrderForm.tsx.
+  referenceImages: string[];
+}
+
+// ---------------------------------------------------------------------------
+// Rewards & Notifications module
+// ---------------------------------------------------------------------------
+
+export interface RewardsSummary {
+  pointsBalance: number;
+  currentTier: string;
+  nextTier: string | null; // null if already at the top tier
+  pointsToNextTier: number; // 0 if at the top tier
+}
+
+export interface RewardTransaction {
+  id: string;
+  type: "earned" | "redeemed";
+  points: number;
+  description: string;
+  createdAt: string;
+}
+
+export interface RewardTier {
+  name: string;
+  minPoints: number;
+  benefits: string[];
+}
+
+export interface RedeemPointsRequest {
+  points: number;
+}
+
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export interface NotificationPreferences {
+  email: boolean;
+  sms: boolean;
+  whatsapp: boolean;
+}
+
+export interface UpdateProfileRequest {
+  name: string;
+  phone: string;
+  email: string;
+}
+
+// ---------------------------------------------------------------------------
+// Admin — Dashboard & Analytics module
+// ---------------------------------------------------------------------------
+
+export interface DashboardStats {
+  todayRevenue: number; // paise
+  todayOrders: number;
+  newCustomers: number;
+  avgOrderValue: number; // paise
+}
+
+export interface SalesPoint {
+  date: string; // ISO date (daily) or "YYYY-MM" (monthly)
+  revenue: number; // paise
+}
+
+export interface HeatmapCell {
+  dayOfWeek: number; // 0 (Sun) - 6 (Sat)
+  hour: number; // 0-23
+  value: number; // order count or revenue, backend-defined
+}
+
+export interface TopProduct {
+  id: string;
+  name: string;
+  unitsSold: number;
+  revenue: number; // paise
+}
+
+export interface LowStockItem {
+  id: string;
+  name: string;
+  stock: number;
+  threshold: number;
+}
+
+export interface PendingOrderSummary {
+  id: string;
+  customerName: string;
+  total: number; // paise
+  status: import("@/lib/constants").OrderStatus;
+  createdAt: string;
+}
+
+export interface AnalyticsDateRange {
+  from: string; // ISO date
+  to: string; // ISO date
+}
+
+export interface RevenueByCategory {
+  category: string;
+  revenue: number; // paise
+}
+
+export interface CustomerGrowthPoint {
+  date: string;
+  newCustomers: number;
+  returningCustomers: number;
+}
+
+export interface ProductSalesPoint {
+  date: string;
+  unitsSold: number;
+}
+
+export interface DeliveryPerformance {
+  avgDeliveryTimeMinutes: number | null;
+  note: string | null;
+}
+
+export interface RewardsStats {
+  pointsIssued: number;
+  pointsRedeemed: number;
+}
+
+export interface ForecastRow {
+  date: string;
+  predictedDemand: number;
+  confidenceNote: string;
+}
+
+export type ExportFormat = "excel" | "pdf";

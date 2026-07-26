@@ -24,7 +24,7 @@ export const authApi = baseApi.injectEndpoints({
         const result = await localAuthQuery(
           { url: "/api/auth/login", method: "POST", body },
           api,
-          extraOptions
+          extraOptions,
         );
         if (result.error) return { error: result.error };
         return { data: (result.data as ApiEnvelope<LoginResponse>).data };
@@ -37,7 +37,7 @@ export const authApi = baseApi.injectEndpoints({
         const result = await localAuthQuery(
           { url: "/api/auth/register", method: "POST", body },
           api,
-          extraOptions
+          extraOptions,
         );
         if (result.error) return { error: result.error };
         return { data: (result.data as ApiEnvelope<RegisterResponse>).data };
@@ -50,7 +50,7 @@ export const authApi = baseApi.injectEndpoints({
         const result = await localAuthQuery(
           { url: "/api/auth/logout", method: "POST" },
           api,
-          extraOptions
+          extraOptions,
         );
         if (result.error) return { error: result.error };
         return { data: undefined };

@@ -1,5 +1,4 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { cookies, NextResponse } from "next/server";
 import { exchangeRefreshToken } from "@/app/api/auth/_shared";
 
 /**

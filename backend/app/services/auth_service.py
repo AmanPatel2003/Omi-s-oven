@@ -20,6 +20,7 @@ from app.core.exceptions import (
 )
 from app.models.user import new_user
 from app.utils.helpers import serialize_doc
+from app.config import settings
 
 
 # ── REGISTER ──────────────────────────────────────────────────
