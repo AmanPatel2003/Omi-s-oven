@@ -520,3 +520,157 @@ export interface ForecastRow {
 }
 
 export type ExportFormat = "excel" | "pdf";
+
+// ---------------------------------------------------------------------------
+// Admin — Catalog Management module
+// ---------------------------------------------------------------------------
+
+export interface AdminProductVariant {
+  id?: string; // absent for a new, unsaved row in the form
+  name: string;
+  price: number; // paise
+  stock: number;
+}
+
+export interface AdminProduct {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  categoryId: string;
+  price: number; // paise
+  discountPrice: number | null;
+  tags: string[];
+  variants: AdminProductVariant[];
+  isEggless: boolean;
+  lowStockThreshold: number;
+  isFeatured: boolean;
+  isAvailable: boolean;
+  images: ProductImage[];
+  stock: number; // used only when variants is empty
+}
+
+export type AdminProductInput = Omit<
+  AdminProduct,
+  "id" | "images" | "isFeatured" | "isAvailable"
+>;
+
+export interface AdminProductListParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  category?: string;
+  sort?: string;
+  sortDir?: "asc" | "desc";
+}
+
+export interface StockAdjustment {
+  variantId?: string; // omitted for single-stock (no-variant) products
+  stock: number; // new absolute stock level, not a delta
+  reason?: string;
+}
+
+export interface AdminCategory {
+  id: string;
+  name: string;
+  slug: string;
+  order: number;
+  productCount: number;
+}
+
+export type AdminCategoryInput = Pick<AdminCategory, "name" | "slug">;
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  unit: string;
+  currentStock: number;
+  lowStockThreshold: number;
+}
+
+export type InventoryMovementType = "restock" | "adjustment";
+
+export interface InventoryAdjustmentRequest {
+  quantity: number;
+  reason: string;
+  type: InventoryMovementType;
+}
+
+export interface InventoryMovement {
+  id: string;
+  type: InventoryMovementType;
+  quantity: number;
+  reason: string;
+  createdAt: string;
+  performedBy: string;
+}
+
+// ---------------------------------------------------------------------------
+// Admin — Orders, Custom Orders & Coupons module
+// ---------------------------------------------------------------------------
+
+export interface AdminOrder extends Order {
+  customerName: string;
+  customerEmail: string;
+  riderId: string | null;
+  riderName: string | null;
+}
+
+export interface AdminOrderListParams {
+  page?: number;
+  status?: import("@/lib/constants").OrderStatus;
+  from?: string;
+  to?: string;
+  search?: string;
+}
+
+export interface StaffMember {
+  id: string;
+  name: string;
+  role: string;
+}
+
+export interface AdminCustomOrder extends CustomOrder {
+  customerName: string;
+  customerEmail: string;
+}
+
+export interface SetQuoteRequest {
+  quotedPrice: number; // paise
+}
+
+export type CouponDiscountType = "percentage" | "flat";
+
+export interface AdminCoupon {
+  id: string;
+  code: string;
+  description: string;
+  discountType: CouponDiscountType;
+  discountValue: number;
+  maxDiscount: number | null;
+  usageLimit: number;
+  usedCount: number;
+  totalDiscountGiven: number; // paise
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+}
+
+export interface CreateCouponRequest {
+  code: string;
+  description: string;
+  discountType: CouponDiscountType;
+  discountValue: number;
+  maxDiscount: number | null;
+  usageLimit: number;
+  startDate: string;
+  endDate: string;
+}
+
+export interface CouponUsageEntry {
+  id: string;
+  customerName: string;
+  orderId: string;
+  discountApplied: number; // paise
+  usedAt: string;
+}

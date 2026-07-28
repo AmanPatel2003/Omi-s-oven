@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
 import type { OrderStatus } from "@/lib/constants";
 
-const STATUS_STYLES: Record<OrderStatus, string> = {
+// Exported so the admin orders page's filter chips can reuse this exact
+// mapping, per the spec's requirement that they visually match.
+export const ORDER_STATUS_STYLES: Record<OrderStatus, string> = {
   pending: "bg-gray-100 text-gray-700",
   confirmed: "bg-blue-100 text-blue-700",
   preparing: "bg-amber-100 text-amber-700",
@@ -10,7 +12,7 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
   cancelled: "bg-red-100 text-red-700",
 };
 
-const STATUS_LABELS: Record<OrderStatus, string> = {
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   pending: "Pending",
   confirmed: "Confirmed",
   preparing: "Preparing",
@@ -24,10 +26,10 @@ export function OrderStatusBadge({ status }: { status: OrderStatus }) {
     <span
       className={cn(
         "inline-block rounded-full px-2.5 py-0.5 text-xs font-medium",
-        STATUS_STYLES[status],
+        ORDER_STATUS_STYLES[status],
       )}
     >
-      {STATUS_LABELS[status]}
+      {ORDER_STATUS_LABELS[status]}
     </span>
   );
 }
