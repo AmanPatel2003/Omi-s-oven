@@ -21,7 +21,7 @@ export interface ValidationErrorResponse {
   }>;
 }
 
-export type UserRole = "customer" | "staff" | "admin";
+export type UserRole = "customer" | "staff" | "admin" | "super_admin";
 
 // Base fields present regardless of how the user authenticated.
 interface BaseUser {
@@ -673,4 +673,179 @@ export interface CouponUsageEntry {
   orderId: string;
   discountApplied: number; // paise
   usedAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// Admin — Staff, Attendance & Salary module
+// ---------------------------------------------------------------------------
+
+export interface StaffProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  isActive: boolean;
+  joinedAt: string;
+}
+
+export interface CreateStaffRequest {
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+}
+
+export interface CreateStaffResponse {
+  staff: StaffProfile;
+  tempPassword: string;
+}
+
+export type UpdateStaffRequest = Pick<
+  StaffProfile,
+  "name" | "email" | "phone" | "role"
+>;
+
+export type AttendanceStatus = "present" | "absent" | "leave" | "holiday";
+
+export interface TodayAttendanceEntry {
+  staffId: string;
+  staffName: string;
+  status: AttendanceStatus;
+  clockIn: string | null;
+  clockOut: string | null;
+}
+
+export interface AttendanceReportRow {
+  staffId: string;
+  staffName: string;
+  days: Record<string, AttendanceStatus>;
+}
+
+export interface MarkLeaveRequest {
+  staffId: string;
+  startDate: string;
+  endDate: string;
+  reason?: string;
+}
+
+export interface StaffAttendanceSummary {
+  daysPresent: number;
+  daysAbsent: number;
+  daysLeave: number;
+  daysHoliday: number;
+}
+
+export interface SalaryPreviewRow {
+  staffId: string;
+  staffName: string;
+  baseSalary: number;
+  daysPresent: number;
+  daysAbsent: number;
+  deductions: number;
+  netSalary: number;
+}
+
+export interface ProcessSalaryResponse {
+  processed: boolean;
+  month: string;
+}
+
+// ---------------------------------------------------------------------------
+// Admin — Customers & Notifications/Campaigns module
+// ---------------------------------------------------------------------------
+
+export interface AdminCustomer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  orderCount: number;
+  totalSpend: number; // paise
+  rewardPoints: number;
+  isBlocked: boolean;
+  joinedAt: string;
+}
+
+export interface AdminCustomerListParams {
+  page?: number;
+  search?: string;
+}
+
+export interface AdminCustomerDetail extends AdminCustomer {
+  addresses: Address[];
+  recentOrders: Order[];
+}
+
+export interface AdjustRewardPointsRequest {
+  points: number; // signed delta — positive credits, negative debits
+  reason: string;
+}
+
+export type NotificationChannel = "email" | "sms" | "whatsapp";
+
+export interface CampaignSegment {
+  loyaltyTier?: string;
+  inactiveDays?: number;
+  minOrders?: number;
+}
+
+export interface SendNotificationRequest {
+  channel: NotificationChannel;
+  targetMode: "specific" | "segment";
+  customerIds?: string[];
+  segment?: CampaignSegment;
+  subject?: string;
+  message: string;
+}
+
+export interface BroadcastNotificationRequest {
+  channel: NotificationChannel;
+  subject?: string;
+  message: string;
+}
+
+export interface CampaignResult {
+  sentCount: number;
+  failedCount: number;
+  skippedCount: number;
+  warning: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Staff Self-Service module (delivery riders)
+// ---------------------------------------------------------------------------
+
+export interface StaffClockStatus {
+  isClockedIn: boolean;
+  clockInTime: string | null;
+}
+
+export interface MyAttendanceDay {
+  date: string; // ISO date "YYYY-MM-DD"
+  status: AttendanceStatus;
+}
+
+export interface StaffAssignedOrder {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  address: Address;
+  status: import("@/lib/constants").OrderStatus;
+}
+
+export interface MarkDeliveredRequest {
+  otp: string;
+}
+
+export interface StaffSalarySlip {
+  id: string;
+  month: string;
+  netPaid: number; // paise
+  paymentDate: string;
+}
+
+export interface LocationPushRequest {
+  latitude: number;
+  longitude: number;
 }

@@ -16,6 +16,7 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   customer: "Customer",
   staff: "Delivery Staff",
   admin: "Admin",
+  super_admin: "Super Admin",
 };
 
 export const ORDER_STATUSES = [
