@@ -16,6 +16,7 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   customer: "Customer",
   staff: "Delivery Staff",
   admin: "Admin",
+  super_admin: "Super Admin",
 };
 
 export const ORDER_STATUSES = [
@@ -28,7 +29,42 @@ export const ORDER_STATUSES = [
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
-/** Route-group prefixes gated by middleware.ts — see Auth Module step 6. */
+/**
+ * Mirrors the backend's VALID_TRANSITIONS map, per the spec's explicit
+ * instruction: <StatusTransitionButton> must only render buttons for legal
+ * next-states, derived from this constant, not trial-and-error.
+ *
+ * IMPORTANT: this is a guess at a reasonable linear bakery order flow
+ * (pending → confirmed → preparing → out_for_delivery → delivered, with
+ * cancellation possible up through preparing but not after dispatch). The
+ * actual backend map was never provided anywhere in the build spec — there
+ * is no source of truth to copy this from. Treat every transition here as
+ * unconfirmed until checked against the real backend; getting this wrong
+ * means either hiding a legal action or showing one the backend rejects.
+ */
+export const VALID_ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  pending: ["confirmed", "cancelled"],
+  confirmed: ["preparing", "cancelled"],
+  preparing: ["out_for_delivery", "cancelled"],
+  out_for_delivery: ["delivered"],
+  delivered: [],
+  cancelled: [],
+};
+
+export const CUSTOM_ORDER_STATUSES = [
+  "pending",
+  "reviewing",
+  "quoted",
+  "confirmed",
+  "in_progress",
+  "completed",
+  "rejected",
+  "cancelled",
+] as const;
+export type CustomOrderStatus = (typeof CUSTOM_ORDER_STATUSES)[number];
+
+export const MIN_LEAD_TIME_HOURS = 48;
+
 export const PROTECTED_PREFIXES = ["/account", "/admin", "/staff"] as const;
 
 export const AUTH_PAGES = ["/auth/login", "/auth/register"] as const;
@@ -43,23 +79,3 @@ export const SORT_OPTIONS: {
   { value: "price_desc", label: "Price: High to Low" },
   { value: "rating", label: "Rating" },
 ];
-
-// Deliberately its own list, not reused from ORDER_STATUSES — the spec is
-// explicit that these need a distinct palette so users don't confuse a
-// custom-cake quote workflow with a regular order's delivery status, even
-// though a couple of the words overlap ("pending", "cancelled").
-export const CUSTOM_ORDER_STATUSES = [
-  "pending",
-  "reviewing",
-  "quoted",
-  "confirmed",
-  "in_progress",
-  "completed",
-  "rejected",
-  "cancelled",
-] as const;
-export type CustomOrderStatus = (typeof CUSTOM_ORDER_STATUSES)[number];
-
-/** Mirrors the backend's MIN_LEAD_TIME_HOURS for client-side validation on
- * the custom-order "needed by" date picker — keep these in sync. */
-export const MIN_LEAD_TIME_HOURS = 48;

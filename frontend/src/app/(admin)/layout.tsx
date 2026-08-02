@@ -10,7 +10,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { requireAuth, isHydrating } = useAuth();
-  requireAuth(["admin"]);
+  requireAuth(["admin", "super_admin"]);
 
   if (isHydrating) {
     return (

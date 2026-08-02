@@ -7,6 +7,12 @@ export interface DataTableColumn<T> {
   header: string;
   render: (row: T) => React.ReactNode;
   align?: "left" | "right";
+  sortKey?: string;
+}
+
+export interface DataTableSort {
+  key: string;
+  direction: "asc" | "desc";
 }
 
 export function DataTable<T extends { id: string }>({
@@ -14,11 +20,15 @@ export function DataTable<T extends { id: string }>({
   rows,
   rowHref,
   emptyMessage = "Nothing here.",
+  sort,
+  onSortChange,
 }: {
   columns: DataTableColumn<T>[];
   rows: T[];
   rowHref?: (row: T) => string;
   emptyMessage?: string;
+  sort?: DataTableSort;
+  onSortChange?: (key: string) => void;
 }) {
   const router = useRouter();
 
@@ -35,17 +45,26 @@ export function DataTable<T extends { id: string }>({
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-crust-100 bg-crust-50">
-            {columns.map((col) => (
-              <th
-                key={col.header}
-                className={cn(
-                  "px-3 py-2 text-xs font-medium text-crust-500",
-                  col.align === "right" ? "text-right" : "text-left",
-                )}
-              >
-                {col.header}
-              </th>
-            ))}
+            {columns.map((col) => {
+              const isSorted = sort?.key === col.sortKey;
+              return (
+                <th
+                  key={col.header}
+                  className={cn(
+                    "px-3 py-2 text-xs font-medium text-crust-500",
+                    col.align === "right" ? "text-right" : "text-left",
+                    col.sortKey &&
+                      "cursor-pointer select-none hover:text-crust-700",
+                  )}
+                  onClick={
+                    col.sortKey ? () => onSortChange?.(col.sortKey!) : undefined
+                  }
+                >
+                  {col.header}
+                  {isSorted && (sort!.direction === "asc" ? " ↑" : " ↓")}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
