@@ -22,8 +22,8 @@ async function hydrateSession(store: AppStore) {
       store.dispatch(
         setCredentials({
           user: envelope.data.user,
-          accessToken: envelope.data.accessToken,
-        })
+          access_token: envelope.data.access_token,
+        }),
       );
     }
   } catch {

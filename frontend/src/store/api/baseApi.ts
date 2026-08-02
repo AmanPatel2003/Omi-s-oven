@@ -12,13 +12,45 @@ import type { ApiEnvelope, RefreshResponse } from "@/types/api";
 // Talks to the real backend for everything except the refresh dance. Sends
 // the access token as a Bearer header — never a cookie — since the backend
 // and frontend are on different origins in general.
+// const rawBaseQuery = fetchBaseQuery({
+//   baseUrl: process.env.NEXT_PUBLIC_API_URL,
+//   prepareHeaders: (headers, { getState }) => {
+//     const token = (getState() as RootState).auth.access_token;
+//     if (token) {
+//       headers.set("Authorization", `Bearer ${token}`);
+//     }
+//     return headers;
+//   },
+// });
+
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  // prepareHeaders: (headers, { getState }) => {
+  //   const state = getState() as RootState;
+
+  //   console.log("Redux State:", state);
+  //   console.log("Auth State:", state.auth);
+  //   console.log("Access Token:", state.auth?.access_token);
+
+  //   const token = state.auth?.access_token;
+
+  //   if (token) {
+  //     headers.set("Authorization", `Bearer ${token}`);
+  //   }
+
+  //   return headers;
+  // },
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.accessToken;
+    const token = (getState() as RootState).auth.access_token;
+
+    console.log("Token:", token);
+
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
+
+    console.log("Authorization Header:", headers.get("Authorization"));
+
     return headers;
   },
 });
@@ -69,7 +101,7 @@ const baseQueryWithReauth: BaseQueryFn<
           api.dispatch(
             setCredentials({
               user: envelope.data.user,
-              accessToken: envelope.data.accessToken,
+              access_token: envelope.data.access_token,
             }),
           );
           return true;

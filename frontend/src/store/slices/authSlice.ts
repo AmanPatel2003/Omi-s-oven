@@ -3,7 +3,7 @@ import type { User } from "@/types/api";
 
 interface AuthState {
   user: User | null;
-  accessToken: string | null;
+  access_token: string | null;
   isAuthenticated: boolean;
   /** True while /api/auth/session is being called on app load. */
   isHydrating: boolean;
@@ -11,7 +11,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  accessToken: null,
+  access_token: null,
   isAuthenticated: false,
   // Starts true: the root Providers component calls /api/auth/session on
   // mount before anything renders behind an auth check, to avoid a flash of
@@ -25,10 +25,10 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ user: User; accessToken: string }>
+      action: PayloadAction<{ user: User; access_token: string }>,
     ) => {
       state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
+      state.access_token = action.payload.access_token;
       state.isAuthenticated = true;
     },
     setHydrated: (state) => {
@@ -36,7 +36,7 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
-      state.accessToken = null;
+      state.access_token = null;
       state.isAuthenticated = false;
     },
   },

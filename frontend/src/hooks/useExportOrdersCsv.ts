@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAppSelector } from "@/store/hooks";
 
 export function useExportOrdersCsv() {
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const access_token = useAppSelector((state) => state.auth.access_token);
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,8 +18,8 @@ export function useExportOrdersCsv() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/orders/export?${params.toString()}`,
         {
-          headers: accessToken
-            ? { Authorization: `Bearer ${accessToken}` }
+          headers: access_token
+            ? { Authorization: `Bearer ${access_token}` }
             : {},
         },
       );

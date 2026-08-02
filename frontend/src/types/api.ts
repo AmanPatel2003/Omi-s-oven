@@ -52,7 +52,7 @@ export interface GoogleUser extends BaseUser {
 export type User = EmailUser | GoogleUser;
 
 export interface AuthTokens {
-  accessToken: string;
+  access_token: string;
   // The refresh token itself never reaches client JS — it's set directly as
   // an httpOnly cookie by the Route Handler. It is NOT part of this type on
   // purpose; if you find yourself adding `refreshToken` here, stop — that
@@ -424,6 +424,17 @@ export interface Notification {
   message: string;
   isRead: boolean;
   createdAt: string;
+}
+
+export interface NotificationListResponse {
+  items: Notification[];
+  unread_count: number;
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
 }
 
 export interface NotificationPreferences {

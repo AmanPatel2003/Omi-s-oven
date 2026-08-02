@@ -40,7 +40,13 @@ export default function AccountPage() {
   const { requireAuth, isHydrating, signOut } = useAuth();
   requireAuth();
 
-  const { data: profile, isLoading } = useGetProfileQuery();
+  // const { data: profile, isLoading } = useGetProfileQuery();
+
+  const auth = useAuth();
+
+  const { data: profile, isLoading } = useGetProfileQuery(undefined, {
+    skip: auth.isHydrating || !auth.isAuthenticated,
+  });
 
   if (isHydrating || isLoading || !profile) {
     return (

@@ -1,19 +1,20 @@
 import { baseApi } from "@/store/api/baseApi";
 import type {
   ApiEnvelope,
-  Notification,
+  NotificationListResponse,
   NotificationPreferences,
 } from "@/types/api";
 
 export const notificationsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getNotifications: builder.query<Notification[], void>({
+    getNotifications: builder.query<NotificationListResponse, void>({
       query: () => "/notifications",
-      transformResponse: (res: ApiEnvelope<Notification[]>) => res.data,
+      transformResponse: (res: ApiEnvelope<NotificationListResponse>) =>
+        res.data,
       providesTags: (result) =>
         result
           ? [
-              ...result.map((n) => ({
+              ...result.items.map((n) => ({
                 type: "Notification" as const,
                 id: n.id,
               })),
