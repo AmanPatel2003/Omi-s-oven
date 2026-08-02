@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Providers } from "@/app/providers";
 import "./globals.css";
+import { ToastContainer } from "@/components/shared/ToastContainer";
 
 export const metadata: Metadata = {
   title: "The Bakery",
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-crust-50 text-crust-900 font-body antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <ToastContainer />
+        </Providers>
       </body>
     </html>
   );
