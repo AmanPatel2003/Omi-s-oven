@@ -1,6 +1,6 @@
-import { cookies, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { exchangeRefreshToken } from "@/app/api/auth/_shared";
-
+import { cookies } from "next/headers";
 /**
  * POST /api/auth/refresh
  *
