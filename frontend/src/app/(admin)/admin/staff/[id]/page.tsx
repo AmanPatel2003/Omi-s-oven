@@ -93,10 +93,10 @@ export default function AdminStaffDetailPage({
 
       {summary && (
         <div className="mt-4 grid grid-cols-4 gap-3">
-          <SummaryStat label="Present" value={summary.daysPresent} />
-          <SummaryStat label="Absent" value={summary.daysAbsent} />
-          <SummaryStat label="Leave" value={summary.daysLeave} />
-          <SummaryStat label="Holiday" value={summary.daysHoliday} />
+          <SummaryStat label="Present" value={summary.days_present} />
+          <SummaryStat label="Absent" value={summary.days_absent} />
+          <SummaryStat label="Leave" value={summary.days_leave} />
+          <SummaryStat label="Holiday" value={summary.days_holiday} />
         </div>
       )}
 
