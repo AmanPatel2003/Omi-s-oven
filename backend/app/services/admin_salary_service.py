@@ -225,27 +225,22 @@ async def generate_slip_pdf(db, staff_id: str, month: str) -> io.BytesIO:
 
 # ── EMAIL SLIP (stub — no provider wired yet) ────────────────────────
 async def email_slip(db, staff_id: str, month: str, pdf_buffer: io.BytesIO) -> dict:
-    """
-    STUB: no email provider is configured in this codebase yet.
-    Wire this to SendGrid/SES/Postmark once credentials are available —
-    see the note flagged in the notifications module for the same gap.
-    """
     staff = await _get_staff_or_404(db, staff_id)
 
-    # placeholder — replace with real provider call, e.g.:
-    # await send_email(
-    #     to=staff["email"],
-    #     subject=f"Salary Slip — {month}",
-    #     body="Please find your salary slip attached.",
-    #     attachment=pdf_buffer, attachment_name=f"salary_slip_{month}.pdf",
-    # )
+    from app.core.notification_providers import send_email_with_attachment
+
+    pdf_buffer.seek(0)
+    result = await send_email_with_attachment(
+        to=staff["email"],
+        subject=f"Salary Slip — {month}",
+        body="Please find your salary slip attached.",
+        pdf_bytes=pdf_buffer.read(),
+        filename=f"salary_slip_{month}.pdf",
+    )
 
     return {
-        "email_sent": False,
-        "email_status_note": (
-            f"Email provider not configured — slip was generated but NOT sent to {staff['email']}. "
-            f"Download the PDF and send manually, or wire an email provider to enable auto-send."
-        ),
+        "email_sent": result["success"],
+        "email_status_note": None if result["success"] else result.get("error"),
     }
 
 

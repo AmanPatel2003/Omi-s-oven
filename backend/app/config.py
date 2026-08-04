@@ -68,11 +68,25 @@ class Settings(BaseSettings):
     # MSG91_API_KEY: str = ""
     # MSG91_SENDER_ID: str = "CAKSHP"
     
-    SMTP_HOST: str = "smtp.gmail.com"
-    SMTP_PORT: int = 587
-    SMTP_USER: str = "amanpatel22012003@gmail.com"
-    SMTP_PASS: str = "knjp jvmp mkjn mdf"
-    EMAIL_FROM: str = "amanpatel22012003@gmail.com"
+    # SMTP_HOST: str = "smtp.gmail.com"
+    # SMTP_PORT: int = 587
+    # SMTP_USER: str = "amanpatel22012003@gmail.com"
+    # SMTP_PASS: str = "knjp jvmp mkjn mdf"
+    # EMAIL_FROM: str = "amanpatel22012003@gmail.com"
+    
+    # ── EMAIL (Brevo, free tier: 300/day) — ACTIVE ────────────────────
+    EMAIL_ENABLED: bool = True
+    BREVO_API_KEY: str
+    BREVO_FROM_EMAIL: str        # must be a verified sender in your Brevo account
+    BREVO_FROM_NAME: str = "Your Bakery Name"
+
+    # ── SMS / WHATSAPP (Twilio) — INACTIVE until you flip these ───────
+    SMS_ENABLED: bool = False
+    WHATSAPP_ENABLED: bool = False
+    TWILIO_ACCOUNT_SID: str = ""
+    TWILIO_AUTH_TOKEN: str = ""
+    TWILIO_SMS_FROM: str = ""
+    TWILIO_WHATSAPP_FROM: str = ""
 
     # Business config
     DELIVERY_RADIUS_KM: int = 10
