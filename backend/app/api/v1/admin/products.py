@@ -8,7 +8,8 @@
 # PUT    /admin/products/:id/stock        Update stock qty for a variant
 
 from fastapi import APIRouter, Depends, UploadFile, File, Query
-
+from app.schemas.common import SuccessResponse
+from app.schemas.admin_product import AdminProductResponse
 from app.database import get_db
 from app.core.dependencies import get_current_admin
 from app.schemas.common import SuccessResponse
@@ -24,10 +25,43 @@ from app.utils.helpers import success_response
 router = APIRouter(dependencies=[Depends(get_current_admin)])
 
 
+@router.get("/{product_id}", response_model=SuccessResponse[AdminProductResponse])
+async def get_product(product_id: str, db=Depends(get_db)):
+    result = await admin_product_service.get_product_by_id(
+        db=db,
+        product_id=product_id,
+    )
+    return success_response(data=result)
+
 @router.post("", response_model=SuccessResponse[AdminProductResponse])
 async def create_product(body: CreateProductRequest, db=Depends(get_db)):
     result = await admin_product_service.create_product(db=db, data=body.model_dump())
     return success_response(data=result, message="Product created successfully")
+
+
+
+
+@router.get("", response_model=SuccessResponse[dict])
+async def get_products(
+    page: int = Query(1, ge=1),
+    pageSize: int = Query(10, ge=1),
+    search: str | None = None,
+    category: str | None = None,
+    sort: str = "created_at",
+    sortDir: str = "desc",
+    db=Depends(get_db),
+):
+    result = await admin_product_service.get_products(
+        db=db,
+        page=page,
+        page_size=pageSize,
+        search=search,
+        category=category,
+        sort=sort,
+        sort_dir=sortDir,
+    )
+
+    return success_response(data=result)
 
 
 @router.put("/{product_id}", response_model=SuccessResponse[AdminProductResponse])

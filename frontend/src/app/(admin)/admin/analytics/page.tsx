@@ -103,7 +103,7 @@ export default function AdminAnalyticsPage() {
         <p className="mb-2 text-sm font-semibold text-crust-800">
           Demand forecast
         </p>
-        <DemandForecastTable rows={forecast ?? []} />
+        <DemandForecastTable rows={forecast?.items ?? []} />
       </div>
     </div>
   );

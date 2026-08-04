@@ -61,14 +61,14 @@ export function DataTable<T extends { id: string }>({
                   }
                 >
                   {col.header}
-                  {isSorted && (sort!.direction === "asc" ? " ↑" : " ↓")}
+                  {isSorted && (sort?.direction === "asc" ? " ↑" : " ↓")}
                 </th>
               );
             })}
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
+          {rows?.map((row) => (
             <tr
               key={row.id}
               onClick={rowHref ? () => router.push(rowHref(row)) : undefined}

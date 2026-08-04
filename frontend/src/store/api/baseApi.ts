@@ -24,13 +24,10 @@ import type { ApiEnvelope, RefreshResponse } from "@/types/api";
 // });
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  // baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
   // prepareHeaders: (headers, { getState }) => {
   //   const state = getState() as RootState;
-
-  //   console.log("Redux State:", state);
-  //   console.log("Auth State:", state.auth);
-  //   console.log("Access Token:", state.auth?.access_token);
 
   //   const token = state.auth?.access_token;
 
@@ -43,13 +40,9 @@ const rawBaseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.access_token;
 
-    console.log("Token:", token);
-
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
-
-    console.log("Authorization Header:", headers.get("Authorization"));
 
     return headers;
   },

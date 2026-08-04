@@ -7,6 +7,9 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 export function ReviewList({ productId }: { productId: string }) {
   const { data: reviews, isLoading } = useGetReviewsQuery(productId);
 
+  console.log("reviews", reviews);
+  console.log(Array.isArray(reviews));
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-6">
@@ -15,7 +18,7 @@ export function ReviewList({ productId }: { productId: string }) {
     );
   }
 
-  if (!reviews || reviews.length === 0) {
+  if (!reviews || reviews.items.length === 0) {
     return (
       <p className="py-6 text-sm text-crust-500">
         No reviews yet — be the first.
@@ -25,7 +28,7 @@ export function ReviewList({ productId }: { productId: string }) {
 
   return (
     <ul className="flex flex-col gap-4">
-      {reviews.map((review) => (
+      {reviews.items?.map((review) => (
         <li key={review.id} className="border-b border-crust-100 pb-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-crust-900">

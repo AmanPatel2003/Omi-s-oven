@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from calendar import month_name
 
+
+
 VALID_REVENUE_STATUSES = {"$ne": "cancelled"}   # orders counted as revenue: everything except cancelled
 PENDING_ACTION_STATUSES = ["pending"]            # orders needing admin action right now
 
@@ -235,3 +237,43 @@ async def get_pending_orders(db, page: int = 1, limit: int = 20) -> dict:
             "total_pages": (total + limit - 1) // limit if total else 0,
         },
     }
+    
+    
+    
+
+
+async def get_hourly_heatmap(db):
+    start_date = datetime.utcnow() - timedelta(days=30)
+
+    pipeline = [
+        {
+            "$match": {
+                "created_at": {"$gte": start_date}
+            }
+        },
+        {
+            "$group": {
+                "_id": {
+                    "day": {"$dayOfWeek": "$created_at"},
+                    "hour": {"$hour": "$created_at"},
+                },
+                "orders": {"$sum": 1},
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "day": {"$subtract": ["$_id.day", 1]},
+                "hour": "$_id.hour",
+                "orders": "$orders",
+            }
+        },
+        {
+            "$sort": {
+                "day": 1,
+                "hour": 1,
+            }
+        },
+    ]
+
+    return await db.orders.aggregate(pipeline).to_list(None)

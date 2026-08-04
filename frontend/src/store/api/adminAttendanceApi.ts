@@ -1,17 +1,19 @@
 import { baseApi } from "@/store/api/baseApi";
 import type {
-  AttendanceReportRow,
   ApiEnvelope,
+  AttendanceReportRow,
   MarkLeaveRequest,
   StaffAttendanceSummary,
   TodayAttendanceEntry,
+  TodayAttendanceResponse,
 } from "@/types/api";
 
 export const adminAttendanceApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getTodayAttendance: builder.query<TodayAttendanceEntry[], void>({
+    getTodayAttendance: builder.query<TodayAttendanceResponse, void>({
       query: () => "/admin/attendance/today",
-      transformResponse: (res: ApiEnvelope<TodayAttendanceEntry[]>) => res.data,
+      transformResponse: (res: ApiEnvelope<TodayAttendanceResponse>) =>
+        res.data,
       providesTags: [{ type: "User", id: "ATTENDANCE_TODAY" }],
     }),
 

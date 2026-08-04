@@ -16,7 +16,8 @@ export function useExportOrdersCsv() {
       if (range.from) params.set("from", range.from);
       if (range.to) params.set("to", range.to);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/orders/export?${params.toString()}`,
+        // `${process.env.NEXT_PUBLIC_API_URL}/admin/orders/export?${params.toString()}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/orders/export?${params.toString()}`,
         {
           headers: access_token
             ? { Authorization: `Bearer ${access_token}` }

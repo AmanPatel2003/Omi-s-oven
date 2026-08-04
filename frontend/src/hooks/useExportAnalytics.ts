@@ -17,7 +17,8 @@ export function useExportAnalytics() {
     setIsExporting(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/analytics/export?format=${format}&from=${range.from}&to=${range.to}`,
+        // `${process.env.NEXT_PUBLIC_API_URL}/admin/analytics/export?format=${format}&from=${range.from}&to=${range.to}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/analytics/export?format=${format}&from=${range.from}&to=${range.to}`,
         {
           headers: access_token
             ? { Authorization: `Bearer ${access_token}` }

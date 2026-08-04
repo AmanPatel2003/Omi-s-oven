@@ -1,7 +1,8 @@
 import { REFRESH_COOKIE_NAME } from "@/lib/constants";
 
 export const REFRESH_COOKIE = REFRESH_COOKIE_NAME;
-export const BACKEND_URL = process.env.API_URL;
+// export const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+export const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,

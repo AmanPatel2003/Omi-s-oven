@@ -3,6 +3,7 @@ import { buildProductQueryString } from "@/lib/product-query";
 import type {
   ApiEnvelope,
   Paginated,
+  PaginatedResponse,
   Product,
   ProductQueryParams,
   Review,
@@ -51,9 +52,10 @@ export const productsApi = baseApi.injectEndpoints({
       providesTags: [{ type: "Product", id: "NEW_ARRIVALS" }],
     }),
 
-    getReviews: builder.query<Review[], string>({
+    getReviews: builder.query<PaginatedResponse<Review>, string>({
       query: (productId) => `/products/${productId}/reviews`,
-      transformResponse: (res: ApiEnvelope<Review[]>) => res.data,
+      transformResponse: (res: ApiEnvelope<PaginatedResponse<Review>>) =>
+        res.data,
       providesTags: (_result, _error, productId) => [
         { type: "Reviews", id: productId },
       ],

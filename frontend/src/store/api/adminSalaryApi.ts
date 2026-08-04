@@ -3,13 +3,15 @@ import type {
   ApiEnvelope,
   ProcessSalaryResponse,
   SalaryPreviewRow,
+  SalaryPreviewResponse,
 } from "@/types/api";
 
 export const adminSalaryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getSalaryPreview: builder.query<SalaryPreviewRow[], string>({
       query: (month) => `/admin/salary/calculate/${month}`,
-      transformResponse: (res: ApiEnvelope<SalaryPreviewRow[]>) => res.data,
+      transformResponse: (res: ApiEnvelope<SalaryPreviewResponse>) =>
+        res.data.items,
     }),
 
     processSalary: builder.mutation<ProcessSalaryResponse, string>({

@@ -12,6 +12,10 @@ class SortOption(str, Enum):
     rating = "rating"
 
 
+class ProductImageResponse(BaseModel):
+    url: str
+    public_id: str
+
 class ProductResponse(BaseModel):
     id: str
     name: str
@@ -19,7 +23,7 @@ class ProductResponse(BaseModel):
     category: str
     price: float
     discount_price: Optional[float] = None
-    images: list[str] = []
+    images: list[ProductImageResponse]= []
     tags: list[str] = []
     is_eggless: bool
     stock: int

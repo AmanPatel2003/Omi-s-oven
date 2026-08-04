@@ -115,11 +115,11 @@ export default function AdminProductsPage() {
               render: (p) => (
                 <Switch
                   label={`${p.name} available`}
-                  checked={p.isAvailable}
+                  checked={p.is_available}
                   onChange={() =>
                     toggleAvailability({
                       id: p.id,
-                      isAvailable: !p.isAvailable,
+                      isAvailable: !p.is_available,
                     })
                   }
                 />
@@ -130,9 +130,9 @@ export default function AdminProductsPage() {
               render: (p) => (
                 <Switch
                   label={`${p.name} featured`}
-                  checked={p.isFeatured}
+                  checked={p.is_featured}
                   onChange={() =>
-                    toggleFeatured({ id: p.id, isFeatured: !p.isFeatured })
+                    toggleFeatured({ id: p.id, isFeatured: !p.is_featured })
                   }
                 />
               ),

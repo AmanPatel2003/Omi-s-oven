@@ -1,5 +1,6 @@
 import { baseApi } from "@/store/api/baseApi";
 import type {
+  AdminCustomOrdersResponse,
   AdminCustomOrder,
   ApiEnvelope,
   SetQuoteRequest,
@@ -18,11 +19,13 @@ export const adminCustomOrdersApi = baseApi.injectEndpoints({
         statuses.forEach((s) => params.append("status", s));
         return `/admin/custom-orders?${params.toString()}`;
       },
-      transformResponse: (res: ApiEnvelope<AdminCustomOrder[]>) => res.data,
+      // transformResponse: (res: ApiEnvelope<AdminCustomOrder[]>) => res.data,
+      transformResponse: (res: ApiEnvelope<AdminCustomOrdersResponse>) =>
+        res.data.items,
       providesTags: (result) =>
         result
           ? [
-              ...result.map((o) => ({
+              ...result?.map((o) => ({
                 type: "CustomOrder" as const,
                 id: o.id,
               })),

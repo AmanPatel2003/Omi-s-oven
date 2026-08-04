@@ -128,7 +128,7 @@ export default function AdminDashboardPage() {
           Pending orders
         </p>
         <DataTable
-          rows={pendingOrders ?? []}
+          rows={pendingOrders?.items ?? []}
           emptyMessage="No pending orders."
           rowHref={(order) => `/admin/orders/${order.id}`}
           columns={[

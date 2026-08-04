@@ -23,9 +23,13 @@ export async function serverFetchProducts(
   );
   const qs = buildProductQueryString(queryParams);
 
-  const res = await fetch(`${process.env.API_URL}/products${qs}`, {
-    next: { revalidate: 60 },
-  });
+  // const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products${qs}`, {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/products${qs}`,
+    {
+      next: { revalidate: 60 },
+    },
+  );
   if (!res.ok) return EMPTY;
 
   const envelope: ApiEnvelope<Paginated<Product>> = await res.json();

@@ -6,6 +6,7 @@ import type {
   LowStockItem,
   PendingOrderSummary,
   SalesPoint,
+  PaginatedResponse,
   TopProduct,
 } from "@/types/api";
 
@@ -42,9 +43,14 @@ export const adminDashboardApi = baseApi.injectEndpoints({
       providesTags: [{ type: "Product", id: "LOW_STOCK" }],
     }),
 
-    getPendingOrders: builder.query<PendingOrderSummary[], void>({
+    getPendingOrders: builder.query<
+      PaginatedResponse<PendingOrderSummary>,
+      void
+    >({
       query: () => "/admin/dashboard/pending-orders",
-      transformResponse: (res: ApiEnvelope<PendingOrderSummary[]>) => res.data,
+      transformResponse: (
+        res: ApiEnvelope<PaginatedResponse<PendingOrderSummary>>,
+      ) => res.data,
       providesTags: [{ type: "Order", id: "PENDING" }],
     }),
   }),

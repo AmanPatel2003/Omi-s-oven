@@ -13,7 +13,8 @@ export function useDownloadAttendanceExcel() {
     setIsDownloading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/attendance/export?month=${month}`,
+        // `${process.env.NEXT_PUBLIC_API_URL}/admin/attendance/export?month=${month}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/attendance/export?month=${month}`,
         {
           headers: access_token
             ? { Authorization: `Bearer ${access_token}` }
