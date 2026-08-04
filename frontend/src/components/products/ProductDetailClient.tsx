@@ -13,7 +13,7 @@ import { openCart } from "@/store/slices/uiSlice";
 
 export function ProductDetailClient({ product }: { product: Product }) {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
-    product.variants[0] ?? null,
+    product?.variants?.[0] ?? null,
   );
   const [activeImage, setActiveImage] = useState(0);
 
@@ -92,11 +92,11 @@ export function ProductDetailClient({ product }: { product: Product }) {
           {formatCurrency(displayPrice)}
         </p>
 
-        {product.variants.length > 0 && (
+        {product?.variants?.length > 0 && (
           <div className="mt-4">
             <p className="text-sm font-medium text-crust-800">Size</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              {product.variants.map((v) => (
+              {product?.variants?.map((v) => (
                 <button
                   key={v.id}
                   type="button"

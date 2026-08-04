@@ -7,21 +7,61 @@ from app.database import get_db
 
 bearer = HTTPBearer()
 
+# async def get_current_user(
+#     credentials: HTTPAuthorizationCredentials = Depends(bearer),
+#     db=Depends(get_db),
+# ):
+#     print("get_current_user called",credentials)
+#     token = credentials.credentials
+#     payload = decode_token(token)
+#     if not payload or payload.get("type") != "access":
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+#     print("payload", payload)
+#     user = await db.users.find_one({"_id": ObjectId(payload.get("sub"))})
+#     print("user found", user)
+#     if not user or not user.get("is_active"):
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+#     return user
+
+
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(bearer),
     db=Depends(get_db),
 ):
-    print("get_current_user called",credentials)
+    print("=" * 80)
+    print("get_current_user called")
+
+    print("Credentials:", credentials)
+
     token = credentials.credentials
+    print("Token:", token)
+
     payload = decode_token(token)
+    print("Payload:", payload)
+
     if not payload or payload.get("type") != "access":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-    print("payload", payload)
-    user = await db.users.find_one({"_id": ObjectId(payload.get("sub"))})
-    print("user found", user)
-    if not user or not user.get("is_active"):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+        print("INVALID TOKEN")
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    user = await db.users.find_one(
+        {"_id": ObjectId(payload.get("sub"))}
+    )
+
+    print("User:", user)
+
+    if not user:
+        print("USER NOT FOUND")
+        raise HTTPException(status_code=401, detail="User not found")
+
+    print("is_active:", user.get("is_active"))
+
+    if not user.get("is_active", True):
+        print("USER INACTIVE")
+        raise HTTPException(status_code=401, detail="User not found")
+
     return user
+
+
 
 async def require_admin(current_user=Depends(get_current_user)):
     if current_user.get("role") != "admin":

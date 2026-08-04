@@ -27,15 +27,15 @@ const productSchema = z.object({
   name: z.string().min(1, "Enter a product name"),
   slug: z.string().min(1, "Enter a slug"),
   description: z.string().min(1, "Enter a description"),
-  categoryId: z.string().min(1, "Select a category"),
+  category: z.string().min(1, "Select a category"),
   price: z.coerce.number().min(0, "Enter a price"),
-  discountPrice: z.coerce.number().min(0).optional(),
-  isEggless: z.boolean(),
-  lowStockThreshold: z.coerce.number().min(0, "Enter a threshold"),
+  discount_price: z.coerce.number().min(0).optional(),
+  is_eggless: z.boolean(),
+  low_stock_threshold: z.coerce.number().min(0, "Enter a threshold"),
   stock: z.coerce.number().min(0, "Enter a stock count"),
 });
-type ProductFormValues = z.infer<typeof productSchema>;
 
+type ProductFormValues = z.infer<typeof productSchema>;
 export function AdminProductForm({
   existing,
   onSaved,
@@ -71,14 +71,18 @@ export function AdminProductForm({
           name: existing.name,
           slug: existing.slug,
           description: existing.description,
-          categoryId: existing.categoryId,
+          category: existing.category,
           price: existing.price,
-          discountPrice: existing.discountPrice ?? undefined,
-          isEggless: existing.isEggless,
-          lowStockThreshold: existing.lowStockThreshold,
+          discount_price: existing.discount_price ?? undefined,
+          is_eggless: existing.is_eggless,
+          low_stock_threshold: existing.low_stock_threshold,
           stock: existing.stock,
         }
-      : { isEggless: false, lowStockThreshold: 5, stock: 0 },
+      : {
+          is_eggless: false,
+          low_stock_threshold: 5,
+          stock: 0,
+        },
   });
 
   const name = watch("name");
@@ -90,7 +94,7 @@ export function AdminProductForm({
     setFormError(null);
     const payload = {
       ...values,
-      discountPrice: values.discountPrice ?? null,
+      discount_price: values.discount_price ?? null,
       tags,
       variants,
     };
@@ -135,7 +139,7 @@ export function AdminProductForm({
         <label className="text-sm font-medium text-crust-800">Category</label>
         <select
           className="rounded-xl border border-crust-200 px-3 py-2 text-sm"
-          {...register("categoryId")}
+          {...register("category")}
         >
           <option value="">Select a category…</option>
           {categories?.map((c) => (
@@ -144,8 +148,8 @@ export function AdminProductForm({
             </option>
           ))}
         </select>
-        {errors.categoryId && (
-          <p className="text-sm text-red-600">{errors.categoryId.message}</p>
+        {errors.category && (
+          <p className="text-sm text-red-600">{errors.category.message}</p>
         )}
       </div>
 
@@ -159,8 +163,8 @@ export function AdminProductForm({
         <Field
           label="Discount price (₹, optional)"
           type="number"
-          error={errors.discountPrice?.message}
-          {...register("discountPrice")}
+          error={errors.discount_price?.message}
+          {...register("discount_price")}
         />
       </div>
 
@@ -188,13 +192,13 @@ export function AdminProductForm({
       <Field
         label="Low stock threshold"
         type="number"
-        error={errors.lowStockThreshold?.message}
-        {...register("lowStockThreshold")}
+        error={errors.low_stock_threshold?.message}
+        {...register("low_stock_threshold")}
       />
 
       <Controller
         control={control}
-        name="isEggless"
+        name="is_eggless"
         render={({ field }) => (
           <label className="flex items-center gap-2 text-sm text-crust-700">
             <input

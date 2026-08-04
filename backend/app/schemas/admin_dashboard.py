@@ -83,3 +83,9 @@ class PaginationMeta(BaseModel):
 class PendingOrdersResponse(BaseModel):
     items: list[PendingOrderItem]
     meta: PaginationMeta
+    
+    
+class HeatmapCell(BaseModel):
+    day: int
+    hour: int
+    orders: int    

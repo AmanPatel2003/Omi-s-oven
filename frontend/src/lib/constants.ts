@@ -3,7 +3,7 @@ import type { UserRole } from "@/types/api";
 /** Name of the httpOnly cookie holding the refresh token — set/read only by
  * Route Handlers (src/app/api/auth/*) and checked (presence-only) by
  * middleware.ts. Never read this from client components. */
-export const REFRESH_COOKIE_NAME = "bakery_refresh_token";
+export const REFRESH_COOKIE_NAME = "refresh_token";
 
 /** Name of the plain (non-httpOnly) cookie holding just the user's role
  * string, set alongside REFRESH_COOKIE_NAME. Exists only so middleware.ts

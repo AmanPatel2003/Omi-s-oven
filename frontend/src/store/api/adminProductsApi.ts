@@ -21,6 +21,22 @@ function buildListQuery(params: AdminProductListParams = {}): string {
   return qs ? `?${qs}` : "";
 }
 
+function toApiProduct(body: AdminProductInput) {
+  return {
+    name: body.name,
+    slug: body.slug,
+    description: body.description,
+    category: body.categoryId,
+    price: body.price,
+    discount_price: body.discountPrice,
+    tags: body.tags,
+    variants: body.variants,
+    is_eggless: body.isEggless,
+    stock: body.stock,
+    low_stock_threshold: body.lowStockThreshold,
+  };
+}
+
 export const adminProductsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAdminProducts: builder.query<
@@ -49,7 +65,11 @@ export const adminProductsApi = baseApi.injectEndpoints({
     }),
 
     createAdminProduct: builder.mutation<AdminProduct, AdminProductInput>({
-      query: (body) => ({ url: "/admin/products", method: "POST", body }),
+      query: (body) => ({
+        url: "/admin/products",
+        method: "POST",
+        body: toApiProduct(body),
+      }),
       transformResponse: (res: ApiEnvelope<AdminProduct>) => res.data,
       invalidatesTags: [{ type: "Product", id: "ADMIN_LIST" }],
     }),
@@ -61,7 +81,7 @@ export const adminProductsApi = baseApi.injectEndpoints({
       query: ({ id, ...body }) => ({
         url: `/admin/products/${id}`,
         method: "PUT",
-        body,
+        body: toApiProduct(body),
       }),
       transformResponse: (res: ApiEnvelope<AdminProduct>) => res.data,
       invalidatesTags: (_result, _error, arg) => [
@@ -76,9 +96,9 @@ export const adminProductsApi = baseApi.injectEndpoints({
       { id: string; isAvailable: boolean }
     >({
       query: ({ id, isAvailable }) => ({
-        url: `/admin/products/${id}`,
-        method: "PATCH",
-        body: { isAvailable },
+        url: `/admin/products/${id}/toggle`,
+        method: "PUT",
+        body: { is_available: isAvailable },
       }),
       transformResponse: (res: ApiEnvelope<AdminProduct>) => res.data,
       invalidatesTags: (_result, _error, arg) => [
@@ -92,9 +112,9 @@ export const adminProductsApi = baseApi.injectEndpoints({
       { id: string; isFeatured: boolean }
     >({
       query: ({ id, isFeatured }) => ({
-        url: `/admin/products/${id}`,
-        method: "PATCH",
-        body: { isFeatured },
+        url: `/admin/products/${id}/featured`,
+        method: "PUT",
+        body: { is_featured: isFeatured },
       }),
       transformResponse: (res: ApiEnvelope<AdminProduct>) => res.data,
       invalidatesTags: (_result, _error, arg) => [
@@ -109,7 +129,7 @@ export const adminProductsApi = baseApi.injectEndpoints({
     >({
       query: ({ id, files }) => {
         const formData = new FormData();
-        files.forEach((file) => formData.append("images", file));
+        files.forEach((file) => formData.append("files", file));
         return {
           url: `/admin/products/${id}/images`,
           method: "POST",

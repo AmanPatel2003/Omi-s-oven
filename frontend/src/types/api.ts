@@ -52,7 +52,7 @@ export interface GoogleUser extends BaseUser {
 export type User = EmailUser | GoogleUser;
 
 export interface AuthTokens {
-  accessToken: string;
+  access_token: string;
   // The refresh token itself never reaches client JS — it's set directly as
   // an httpOnly cookie by the Route Handler. It is NOT part of this type on
   // purpose; if you find yourself adding `refreshToken` here, stop — that
@@ -426,6 +426,17 @@ export interface Notification {
   createdAt: string;
 }
 
+export interface NotificationListResponse {
+  items: Notification[];
+  unread_count: number;
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+}
+
 export interface NotificationPreferences {
   email: boolean;
   sms: boolean;
@@ -519,6 +530,12 @@ export interface ForecastRow {
   confidenceNote: string;
 }
 
+export interface ForecastResponse {
+  generated_at: string;
+  method: string;
+  items: ForecastRow[];
+}
+
 export type ExportFormat = "excel" | "pdf";
 
 // ---------------------------------------------------------------------------
@@ -532,27 +549,68 @@ export interface AdminProductVariant {
   stock: number;
 }
 
+// export interface AdminProduct {
+//   id: string;
+//   name: string;
+//   slug: string;
+//   description: string;
+//   categoryId: string;
+//   price: number; // paise
+//   discountPrice: number | null;
+//   tags: string[];
+//   variants: AdminProductVariant[];
+//   isEggless: boolean;
+//   lowStockThreshold: number;
+//   isFeatured: boolean;
+//   isAvailable: boolean;
+//   images: ProductImage[];
+//   stock: number; // used only when variants is empty
+// }
+
 export interface AdminProduct {
   id: string;
   name: string;
   slug: string;
   description: string;
-  categoryId: string;
-  price: number; // paise
-  discountPrice: number | null;
+
+  category: string;
+
+  price: number;
+  discount_price: number | null;
+
   tags: string[];
   variants: AdminProductVariant[];
-  isEggless: boolean;
-  lowStockThreshold: number;
-  isFeatured: boolean;
-  isAvailable: boolean;
+
+  is_eggless: boolean;
+
+  low_stock_threshold: number;
+
+  is_featured: boolean;
+  is_available: boolean;
+
   images: ProductImage[];
-  stock: number; // used only when variants is empty
+
+  stock: number;
+
+  total_sold: number;
+  avg_rating: number;
+  review_count: number;
+
+  created_at: string;
+  updated_at: string;
 }
 
 export type AdminProductInput = Omit<
   AdminProduct,
-  "id" | "images" | "isFeatured" | "isAvailable"
+  | "id"
+  | "images"
+  | "is_featured"
+  | "is_available"
+  | "total_sold"
+  | "avg_rating"
+  | "review_count"
+  | "created_at"
+  | "updated_at"
 >;
 
 export interface AdminProductListParams {
@@ -635,6 +693,16 @@ export interface AdminCustomOrder extends CustomOrder {
   customerEmail: string;
 }
 
+export interface AdminCustomOrdersResponse {
+  items: AdminCustomOrder[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+}
+
 export interface SetQuoteRequest {
   quotedPrice: number; // paise
 }
@@ -679,6 +747,13 @@ export interface CouponUsageEntry {
 // Admin — Staff, Attendance & Salary module
 // ---------------------------------------------------------------------------
 
+export interface SalaryPreviewResponse {
+  month: string;
+  total_staff: number;
+  total_payable: number;
+  items: SalaryPreviewRow[];
+}
+
 export interface StaffProfile {
   id: string;
   name: string;
@@ -706,34 +781,49 @@ export type UpdateStaffRequest = Pick<
   "name" | "email" | "phone" | "role"
 >;
 
-export type AttendanceStatus = "present" | "absent" | "leave" | "holiday";
+export type AttendanceStatus =
+  | "present"
+  | "absent"
+  | "leave"
+  | "holiday"
+  | "not_marked";
 
 export interface TodayAttendanceEntry {
-  staffId: string;
-  staffName: string;
+  staff_id: string;
+  staff_name: string;
+  role: string;
   status: AttendanceStatus;
-  clockIn: string | null;
-  clockOut: string | null;
+  check_in: string | null;
+  check_out: string | null;
+}
+
+export interface TodayAttendanceResponse {
+  date: string;
+  total_staff: number;
+  present_count: number;
+  absent_count: number;
+  not_marked_count: number;
+  staff: TodayAttendanceEntry[];
 }
 
 export interface AttendanceReportRow {
-  staffId: string;
-  staffName: string;
+  staff_id: string;
+  staff_name: string;
   days: Record<string, AttendanceStatus>;
 }
 
 export interface MarkLeaveRequest {
-  staffId: string;
-  startDate: string;
-  endDate: string;
+  staff_id: string;
+  start_date: string;
+  end_date: string;
   reason?: string;
 }
 
 export interface StaffAttendanceSummary {
-  daysPresent: number;
-  daysAbsent: number;
-  daysLeave: number;
-  daysHoliday: number;
+  days_present: number;
+  days_absent: number;
+  days_leave: number;
+  days_holiday: number;
 }
 
 export interface SalaryPreviewRow {
@@ -848,4 +938,20 @@ export interface StaffSalarySlip {
 export interface LocationPushRequest {
   latitude: number;
   longitude: number;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+}
+
+export interface HeatmapCell {
+  day: number;
+  hour: number;
+  orders: number;
 }

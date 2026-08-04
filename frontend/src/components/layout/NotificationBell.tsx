@@ -16,7 +16,8 @@ export function NotificationBell() {
   const [markRead] = useMarkNotificationReadMutation();
   const [markAllRead] = useMarkAllNotificationsReadMutation();
 
-  const unreadCount = notifications?.filter((n) => !n.isRead).length ?? 0;
+  const unreadCount =
+    notifications?.items?.filter((n) => !n.isRead).length ?? 0;
 
   return (
     <div className="relative">
@@ -64,7 +65,7 @@ export function NotificationBell() {
                   No notifications yet.
                 </p>
               ) : (
-                notifications.map((n) => (
+                notifications.items.map((n) => (
                   <button
                     key={n.id}
                     type="button"

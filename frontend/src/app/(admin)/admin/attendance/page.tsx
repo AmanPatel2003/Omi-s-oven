@@ -86,18 +86,18 @@ export default function AdminAttendancePage() {
                   <tr className="border-b border-crust-100 bg-crust-50 text-left text-xs font-medium text-crust-500">
                     <th className="px-3 py-2">Staff</th>
                     <th className="px-3 py-2">Status</th>
-                    <th className="px-3 py-2">Clock in</th>
-                    <th className="px-3 py-2">Clock out</th>
+                    <th className="px-3 py-2">Check in</th>
+                    <th className="px-3 py-2">Check out</th>
                     <th className="px-3 py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {today?.map((entry) => (
+                  {today?.staff?.map((entry) => (
                     <tr
-                      key={entry.staffId}
+                      key={entry.staff_id}
                       className="border-b border-crust-50 last:border-0"
                     >
-                      <td className="px-3 py-2">{entry.staffName}</td>
+                      <td className="px-3 py-2">{entry.staff_name}</td>
                       <td className="px-3 py-2">
                         <span
                           className={cn(
@@ -109,28 +109,28 @@ export default function AdminAttendancePage() {
                         </span>
                       </td>
                       <td className="px-3 py-2 text-crust-600">
-                        {entry.clockIn ?? "—"}
+                        {entry.check_in ?? "—"}
                       </td>
                       <td className="px-3 py-2 text-crust-600">
-                        {entry.clockOut ?? "—"}
+                        {entry.check_out ?? "—"}
                       </td>
                       <td className="px-3 py-2">
                         <div className="flex gap-3 text-xs">
                           <button
                             type="button"
-                            disabled={!!entry.clockIn}
-                            onClick={() => clockIn(entry.staffId)}
+                            disabled={!!entry.check_in}
+                            onClick={() => clockIn(entry.staff_id)}
                             className="text-crust-600 underline disabled:text-crust-300"
                           >
-                            Clock in
+                            check in
                           </button>
                           <button
                             type="button"
-                            disabled={!entry.clockIn || !!entry.clockOut}
-                            onClick={() => clockOut(entry.staffId)}
+                            disabled={!entry.check_in || !!entry.check_out}
+                            onClick={() => clockOut(entry.staff_id)}
                             className="text-crust-600 underline disabled:text-crust-300"
                           >
-                            Clock out
+                            check out
                           </button>
                           <button
                             type="button"

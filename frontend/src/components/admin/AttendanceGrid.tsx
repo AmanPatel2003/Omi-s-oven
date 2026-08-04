@@ -6,13 +6,15 @@ export const ATTENDANCE_STATUS_STYLES: Record<AttendanceStatus, string> = {
   absent: "bg-red-100 text-red-700",
   leave: "bg-amber-100 text-amber-700",
   holiday: "bg-gray-100 text-gray-500",
+  not_marked: "bg-gray-100 text-gray-700",
 };
 
 const ATTENDANCE_STATUS_LETTERS: Record<AttendanceStatus, string> = {
-  present: "P",
-  absent: "A",
-  leave: "L",
-  holiday: "H",
+  present: "Present",
+  absent: "Absent",
+  leave: "Leave",
+  holiday: "Holiday",
+  not_marked: "Not Marked",
 };
 
 export function AttendanceGrid({
@@ -44,9 +46,9 @@ export function AttendanceGrid({
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.staffId}>
+            <tr key={row.staff_id}>
               <td className="sticky left-0 whitespace-nowrap bg-white pr-3 text-sm text-crust-800">
-                {row.staffName}
+                {row.staff_name}
               </td>
               {dayNumbers.map((d) => {
                 const status = row.days[String(d)];

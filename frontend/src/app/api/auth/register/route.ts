@@ -29,11 +29,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(envelope, { status: backendRes.status });
   }
 
-  const { refreshToken, ...tokenData } = envelope.data;
-  cookies().set(REFRESH_COOKIE, refreshToken, REFRESH_COOKIE_OPTIONS);
+  const { refresh_token, ...tokenData } = envelope.data;
+  cookies().set(REFRESH_COOKIE, refresh_token, REFRESH_COOKIE_OPTIONS);
 
   return NextResponse.json(
     { ...envelope, data: tokenData },
-    { status: backendRes.status }
+    { status: backendRes.status },
   );
 }

@@ -5,6 +5,7 @@ import {
   REFRESH_COOKIE_OPTIONS,
   BACKEND_URL,
 } from "@/app/api/auth/_shared";
+import { ROLE_COOKIE_NAME } from "@/lib/constants";
 
 /**
  * POST /api/auth/login
@@ -32,11 +33,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(envelope, { status: backendRes.status });
   }
 
-  const { refreshToken, ...tokenData } = envelope.data;
-  cookies().set(REFRESH_COOKIE, refreshToken, REFRESH_COOKIE_OPTIONS);
+  const { refresh_token, ...tokenData } = envelope.data;
+  cookies().set(REFRESH_COOKIE, refresh_token, REFRESH_COOKIE_OPTIONS);
+  cookies().set(ROLE_COOKIE_NAME, tokenData.user.role, REFRESH_COOKIE_OPTIONS);
 
   return NextResponse.json(
     { ...envelope, data: tokenData },
-    { status: backendRes.status }
+    { status: backendRes.status },
   );
 }

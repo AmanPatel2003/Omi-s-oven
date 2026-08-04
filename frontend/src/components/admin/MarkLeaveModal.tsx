@@ -20,9 +20,9 @@ export function MarkLeaveModal({
   async function handleSubmit() {
     if (!startDate || !endDate) return;
     await markLeave({
-      staffId: staff.staffId,
-      startDate,
-      endDate,
+      staff_id: staff.staff_id,
+      start_date: startDate,
+      end_date: endDate,
       reason: reason || undefined,
     });
     onClose();
@@ -32,7 +32,7 @@ export function MarkLeaveModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
       <div className="w-full max-w-sm rounded-xl bg-white p-5">
         <p className="font-medium text-crust-900">
-          Mark leave — {staff.staffName}
+          Mark leave — {staff.staff_name}
         </p>
 
         <div className="mt-4 flex flex-col gap-3">

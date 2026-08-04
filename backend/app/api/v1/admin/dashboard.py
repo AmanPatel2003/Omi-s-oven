@@ -12,6 +12,7 @@ from app.database import get_db
 from app.core.dependencies import get_current_admin
 from app.schemas.common import SuccessResponse
 from app.schemas.admin_dashboard import (
+    HeatmapCell,
     TodayStatsResponse,
     DailySalesResponse,
     MonthlySalesResponse,
@@ -74,3 +75,11 @@ async def pending_orders(
 ):
     result = await dashboard_service.get_pending_orders(db=db, page=page, limit=limit)
     return success_response(data=result)
+
+@router.get(
+    "/heatmap",
+    response_model=SuccessResponse[list[HeatmapCell]],
+)
+async def get_hourly_heatmap(db=Depends(get_db)):
+    data = await dashboard_service.get_hourly_heatmap(db)
+    return success_response(data=data)

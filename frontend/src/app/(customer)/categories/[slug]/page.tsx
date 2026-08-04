@@ -7,9 +7,13 @@ async function getCategory(
   page?: string,
 ): Promise<CategoryWithProducts | null> {
   const qs = page ? `?page=${page}` : "";
-  const res = await fetch(`${process.env.API_URL}/categories/${slug}${qs}`, {
-    next: { revalidate: 60 },
-  });
+  // const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${slug}${qs}`, {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${slug}${qs}`,
+    {
+      next: { revalidate: 60 },
+    },
+  );
   if (!res.ok) return null;
   const envelope: ApiEnvelope<CategoryWithProducts> = await res.json();
   return envelope.data;

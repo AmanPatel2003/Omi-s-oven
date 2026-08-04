@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { registerSchema, mapPydanticErrors, type RegisterFormValues } from "@/lib/validators";
+import {
+  registerSchema,
+  mapPydanticErrors,
+  type RegisterFormValues,
+} from "@/lib/validators";
 import { useRegisterMutation } from "@/store/api/authApi";
 import { useAppDispatch } from "@/store/hooks";
 import { setCredentials } from "@/store/slices/authSlice";
@@ -34,16 +38,26 @@ export default function RegisterPage() {
     setEmailExists(false);
     try {
       const result = await registerUser(values).unwrap();
-      dispatch(setCredentials({ user: result.user, accessToken: result.accessToken }));
+      dispatch(
+        setCredentials({
+          user: result.user,
+          access_token: result.access_token,
+        }),
+      );
       router.push("/account");
     } catch (err: unknown) {
-      const error = err as { status?: number; data?: ValidationErrorResponse | { message?: string } };
+      const error = err as {
+        status?: number;
+        data?: ValidationErrorResponse | { message?: string };
+      };
 
       // 409 is called out distinctly per the build spec — a clear
       // "this email is taken" message, not lumped in with generic errors.
       if (error.status === 409) {
         setEmailExists(true);
-        setError("email", { message: "An account with this email already exists." });
+        setError("email", {
+          message: "An account with this email already exists.",
+        });
         return;
       }
 
@@ -70,8 +84,17 @@ export default function RegisterPage() {
         Order custom cakes and track deliveries in one place.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 flex flex-col gap-4" noValidate>
-        <Field label="Name" autoComplete="name" error={errors.name?.message} {...register("name")} />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-6 flex flex-col gap-4"
+        noValidate
+      >
+        <Field
+          label="Name"
+          autoComplete="name"
+          error={errors.name?.message}
+          {...register("name")}
+        />
         <Field
           label="Email"
           type="email"
@@ -117,7 +140,10 @@ export default function RegisterPage() {
 
       <p className="mt-6 text-center text-sm text-crust-600">
         Already have an account?{" "}
-        <Link href="/auth/login" className="font-medium text-crust-800 underline">
+        <Link
+          href="/auth/login"
+          className="font-medium text-crust-800 underline"
+        >
           Sign in
         </Link>
       </p>

@@ -1,7 +1,8 @@
 import { REFRESH_COOKIE_NAME } from "@/lib/constants";
 
 export const REFRESH_COOKIE = REFRESH_COOKIE_NAME;
-export const BACKEND_URL = process.env.API_URL;
+// export const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+export const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -21,7 +22,7 @@ export const REFRESH_COOKIE_OPTIONS = {
  * Returns null if there's no cookie or the backend rejects it.
  */
 export async function exchangeRefreshToken(
-  cookieStore: ReturnType<typeof import("next/headers").cookies>
+  cookieStore: ReturnType<typeof import("next/headers").cookies>,
 ): Promise<{ envelope: unknown; status: number } | null> {
   const refreshToken = cookieStore.get(REFRESH_COOKIE)?.value;
   if (!refreshToken) return null;
@@ -30,8 +31,10 @@ export async function exchangeRefreshToken(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Cookie: `refresh_token=${refreshToken}`,
     },
+    body: JSON.stringify({
+      refresh_token: refreshToken,
+    }),
   });
 
   if (!backendRes.ok) {
@@ -40,8 +43,8 @@ export async function exchangeRefreshToken(
   }
 
   const envelope = await backendRes.json();
-  if (envelope.data?.refreshToken) {
-    const { refreshToken: rotated, ...tokenData } = envelope.data;
+  if (envelope.data?.refresh_token) {
+    const { refresh_token: rotated, ...tokenData } = envelope.data;
     cookieStore.set(REFRESH_COOKIE, rotated, REFRESH_COOKIE_OPTIONS);
     envelope.data = tokenData;
   }

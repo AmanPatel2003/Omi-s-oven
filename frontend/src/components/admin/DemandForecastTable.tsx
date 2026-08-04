@@ -21,7 +21,7 @@ export function DemandForecastTable({ rows }: { rows: ForecastRow[] }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
+          {rows?.map((row) => (
             <tr
               key={row.date}
               className="border-b border-crust-50 last:border-0 align-top"

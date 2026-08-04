@@ -5,7 +5,7 @@ import { useAppSelector } from "@/store/hooks";
 import type { AnalyticsDateRange, ExportFormat } from "@/types/api";
 
 export function useExportAnalytics() {
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const access_token = useAppSelector((state) => state.auth.access_token);
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,10 +17,11 @@ export function useExportAnalytics() {
     setIsExporting(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/analytics/export?format=${format}&from=${range.from}&to=${range.to}`,
+        // `${process.env.NEXT_PUBLIC_API_URL}/admin/analytics/export?format=${format}&from=${range.from}&to=${range.to}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/analytics/export?format=${format}&from=${range.from}&to=${range.to}`,
         {
-          headers: accessToken
-            ? { Authorization: `Bearer ${accessToken}` }
+          headers: access_token
+            ? { Authorization: `Bearer ${access_token}` }
             : {},
         },
       );

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAppSelector } from "@/store/hooks";
 
 export function useDownloadSalarySlip() {
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const access_token = useAppSelector((state) => state.auth.access_token);
   const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -13,10 +13,11 @@ export function useDownloadSalarySlip() {
     setIsDownloading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/salary/slip/${staffId}?month=${month}`,
+        // `${process.env.NEXT_PUBLIC_API_URL}/admin/salary/slip/${staffId}?month=${month}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/salary/slip/${staffId}?month=${month}`,
         {
-          headers: accessToken
-            ? { Authorization: `Bearer ${accessToken}` }
+          headers: access_token
+            ? { Authorization: `Bearer ${access_token}` }
             : {},
         },
       );

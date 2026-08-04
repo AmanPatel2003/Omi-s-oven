@@ -4,6 +4,7 @@ import type {
   ApiEnvelope,
   CustomerGrowthPoint,
   DeliveryPerformance,
+  ForecastResponse,
   ForecastRow,
   ProductSalesPoint,
   RevenueByCategory,
@@ -57,9 +58,9 @@ export const adminAnalyticsApi = baseApi.injectEndpoints({
       transformResponse: (res: ApiEnvelope<RewardsStats>) => res.data,
     }),
 
-    getDemandForecast: builder.query<ForecastRow[], void>({
+    getDemandForecast: builder.query<ForecastResponse, void>({
       query: () => "/admin/analytics/demand-forecast",
-      transformResponse: (res: ApiEnvelope<ForecastRow[]>) => res.data,
+      transformResponse: (res: ApiEnvelope<ForecastResponse>) => res.data,
     }),
   }),
   overrideExisting: false,

@@ -1,6 +1,7 @@
 from datetime import datetime
 from bson import ObjectId
-
+from pymongo import ASCENDING, DESCENDING
+import re
 from app.core.exceptions import NotFoundException, BadRequestException, ConflictException
 from app.core.cloudinary_client import upload_image, delete_image
 
@@ -24,6 +25,10 @@ async def _find_product(db, product_id: str) -> dict:
         raise NotFoundException("Product not found")
     return product
 
+# ── GET PRODUCT BY ID ─────────────────────────────────────────────
+async def get_product_by_id(db, product_id: str) -> dict:
+    product = await _find_product(db, product_id)
+    return _out(product)
 
 # ── CREATE ────────────────────────────────────────────────────────
 async def create_product(db, data: dict) -> dict:
@@ -46,6 +51,52 @@ async def create_product(db, data: dict) -> dict:
     doc["_id"] = result.inserted_id
     return _out(doc)
 
+
+
+
+async def get_products(
+    db,
+    page: int,
+    page_size: int,
+    search: str | None,
+    category: str | None,
+    sort: str,
+    sort_dir: str,
+):
+    query = {}
+
+    if search:
+        query["name"] = {
+            "$regex": re.escape(search),
+            "$options": "i",
+        }
+
+    if category:
+        query["category"] = category
+
+    direction = ASCENDING if sort_dir == "asc" else DESCENDING
+
+    total = await db.products.count_documents(query)
+
+    cursor = (
+        db.products.find(query)
+        .sort(sort, direction)
+        .skip((page - 1) * page_size)
+        .limit(page_size)
+    )
+
+    items = []
+
+    async for product in cursor:
+        items.append(_out(product))
+
+    return {
+        "items": items,
+        "page": page,
+        "pageSize": page_size,
+        "total": total,
+        "totalPages": (total + page_size - 1) // page_size,
+    }
 
 # ── UPDATE ────────────────────────────────────────────────────────
 async def update_product(db, product_id: str, data: dict) -> dict:

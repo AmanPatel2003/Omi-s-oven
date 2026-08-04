@@ -5,11 +5,16 @@ import { ReviewForm } from "@/components/products/ReviewForm";
 import type { ApiEnvelope, Product } from "@/types/api";
 
 async function getProduct(slug: string): Promise<Product | null> {
-  const res = await fetch(`${process.env.API_URL}/products/${slug}`, {
-    next: { revalidate: 60 },
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${slug}`,
+    {
+      next: { revalidate: 60 },
+    },
+  );
   if (!res.ok) return null;
+  console.log("This is product page  Response:", res);
   const envelope: ApiEnvelope<Product> = await res.json();
+  console.log(envelope.data); // <-- Check this
   return envelope.data;
 }
 
